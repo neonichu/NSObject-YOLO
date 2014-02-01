@@ -46,12 +46,72 @@ static BOOL Swizzle(Class c, SEL orig, SEL new) {
 		[invocation setSelector:aSelector];
 		if (arg1)
 			[invocation setArgument:arg1 atIndex:2];
-		void *theArg = nil;
+		const char* argType;
 		for (int i = 3; i < [methodSig numberOfArguments]; i++)
 		{
-			theArg = va_arg(args, void *);
-			if (theArg)
-				[invocation setArgument:theArg atIndex:i];
+            // From: https://github.com/nst/nsarray-functional/blob/master/NSInvocation+Functional.m
+            argType = [methodSig getArgumentTypeAtIndex:i];
+            
+            if(!strcmp(argType, @encode(id))) {
+                id arg = va_arg(args, id);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(SEL))) {
+                SEL arg = va_arg(args, SEL);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(Class))) {
+                Class arg = va_arg(args, Class);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(char))) {
+                char arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(unsigned char))) {
+                unsigned char arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(int))) {
+                int arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(bool))) {
+                bool arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(BOOL))) {
+                BOOL arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(short))) {
+                short arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(unichar))) {
+                unichar arg = va_arg(args, int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(float))) {
+                float arg = va_arg(args, double);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(double))) {
+                double arg = va_arg(args, double);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(long))) {
+                long arg = va_arg(args, long);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(long long))) {
+                long long arg = va_arg(args, long long);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(unsigned int))) {
+                unsigned int arg = va_arg(args, unsigned int);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(unsigned long))) {
+                unsigned long arg = va_arg(args, unsigned long);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(unsigned long long))) {
+                unsigned long long arg = va_arg(args, unsigned long long);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(char*))) {
+                char* arg = va_arg(args, char*);
+                [invocation setArgument:&arg atIndex:i];
+            } else if(!strcmp(argType, @encode(void*))) {
+                void* arg = va_arg(args, void*);
+                [invocation setArgument:&arg atIndex:i];
+            } else {
+                NSAssert1(NO, @"-- Unhandled type: %s", argType);
+            }
 		}
 		[invocation invoke];	
 		if (result)

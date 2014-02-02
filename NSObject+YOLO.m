@@ -53,7 +53,7 @@ static BOOL Swizzle(Class c, SEL orig, SEL new) {
             argType = [methodSig getArgumentTypeAtIndex:i];
             
             if(!strcmp(argType, @encode(id))) {
-                id arg = va_arg(args, id);
+                void* arg = va_arg(args, void*);
                 [invocation setArgument:&arg atIndex:i];
             } else if(!strcmp(argType, @encode(SEL))) {
                 SEL arg = va_arg(args, SEL);

@@ -109,6 +109,9 @@ static BOOL Swizzle(Class c, SEL orig, SEL new) {
             } else if(!strcmp(argType, @encode(void*))) {
                 void* arg = va_arg(args, void*);
                 [invocation setArgument:&arg atIndex:i];
+            } else if (!strncmp(argType, "^{", 2)) { // Pointer to a struct
+                void* arg = va_arg(args, void*);
+                [invocation setArgument:&arg atIndex:i];
             } else {
                 NSAssert1(NO, @"-- Unhandled type: %s", argType);
             }
